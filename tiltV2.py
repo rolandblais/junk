@@ -8,20 +8,6 @@ import pygame
 import os
 import RPi.GPIO as GPIO
 
-#Set up the GPIO pins for the push buttons
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(17,GPIO.IN)
-GPIO.setup(27,GPIO.IN)
-GPIO.add_event_detect(17, GPIO.RISING)
-GPIO.add_event_detect(27, GPIO.RISING)
-
-#Set the framebuffer device to be tht TFT
-os.environ["SDL_FBDEV"] = "/dev/fb1"
-#Set the display variable for the TFT
-os.environ["DISPLAY"] = "0:1"
-#Set the video driver to something you know works for your display
-os.environ["SDL_VIDEODRIVER"] = "directfb"
-
 #Assign uuid's of various colour tilt hydrometers. BLE devices like the tilt work primarily using advertisements. 
 #The first section of any advertisement is the universally unique identifier. Tilt uses a particular identifier based on the colour of the device
 red    	= 'a495bb10c5b14b44b5121370f02d74de'
@@ -37,6 +23,7 @@ pink   	= 'a495bb80c5b14b44b5121370f02d74de'
 dev_id = 0
 
 #function to arrange text on a surface before updating display
+###NEED TO RECODE FOR OLED
 def displayText(text, size, xpos, ypos, colour, clearScreen):
 	if clearScreen:
 		screen.fill((0, 0, 0))
@@ -98,7 +85,7 @@ def getdata():
 		
 
 def main():
-
+###NEED TO RECODE FOR OLED
 	global screen
 	pygame.init()
 
@@ -122,6 +109,7 @@ def main():
 
 		if time.time() < screenTime: 		#if the screen has been on for less than screenSecs update the display
 			nextUpdate = str(int(round(updateTime - time.time())))
+			###NEED TO RECODE FOR OLED
 			#displayText(text, size, xpos, ypos, colour, clearScreen)    
 			displayText(str(tiltSG), 50, 10, 10, (0,0,200), True)
 			displayText("SG", 20, 100, 30, (0,200,0), False)
@@ -132,6 +120,7 @@ def main():
 			displayText("next sheet update", 20, 5, 105, (0,0,200), False) 
 			pygame.display.flip()
 		else: 							#otherwise blank the display
+			###NEED TO RECODE FOR OLED
 			screen.fill((0,0,0))
 			pygame.display.flip()
 		
