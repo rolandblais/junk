@@ -19,23 +19,52 @@ from PIL import ImageFont
 
 import subprocess
 
+# Raspberry Pi pin configuration:
+RST = None     # on the PiOLED this pin isnt used
 
+# 128x64 display with hardware I2C:
+disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 
-secDelay = 60 #paus for network to spin up, usually 60
+# Initialize library.
+disp.begin()
+
+# Clear display.
+disp.clear()
+disp.display()
+
+# Create blank image for drawing.
+# Make sure to create image with mode '1' for 1-bit color.
+width = disp.width
+height = disp.height
+image = Image.new('1', (width, height))
+
+# Get drawing object to draw on image.
+draw = ImageDraw.Draw(image)
+
+# Draw a black filled box to clear the image.
+draw.rectangle((0,0,width,height), outline=0, fill=0)
+
+# Load font.
+#font = ImageFont.load_default()
+font = ImageFont.truetype('437.ttf', 12)
+
+secDelay = 60 #pause for network to spin up, usually 60
 delay = 600 #delay between spreadsheet updates, usually 600
 
 for i in range(secDelay, 0, -1):
-        lcd.clear()
-        lcd.message(datetime.datetime.now().strftime('%H:%M:%S'))
-        #lcd.message(datetime.now().strftime('%H:%M:%S'))
-        lcd.message("\n")
-        lcd.message("Pausing ")
-        lcd.message(str(i))
+        draw.rectangle((0,0,width,height), outline=0, fill=0)
+        draw.text((x, top),datetime.datetime.now().strftime('%H:%M:%S')),  font=font, fill=255)
+        draw.text((x, top+12), "Pausing " str(i) "seconds", font=font, fill=255)
+        disp.image(image)
+        disp.display()
         time.sleep(1)
 
-lcd.set_backlight(0)#off
-lcd.message("\n")
-lcd.message("Starting...")
+
+draw.rectangle((0,0,width,height), outline=0, fill=0)
+draw.text((x, top),"Starting...",  font=font, fill=255)
+disp.image(image)
+disp.display()
+
 #Assign uuid's of various colour tilt hydrometers. BLE devices like the tilt work primarily using advertisements.
 #The first section of any advertisement is the universally unique identifier. Tilt uses a particular identifier based on the colour of the device
 red     = 'a495bb10c5b14b44b5121370f02d74de'
@@ -64,8 +93,10 @@ def getdata():
                 sock = bluez.hci_open_dev(dev_id)
         except:
                 print "error accessing bluetooth device..."
-                lcd.clear()
-                lcd.message("error accessing bluetooth device...")
+                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                draw.text((x, top),"error accessing bluetooth device...",  font=font, fill=255)
+                disp.image(image)
+                disp.display()
                 sys.exit(1)
 
         blescan.hci_le_set_scan_parameters(sock)
@@ -125,27 +156,20 @@ def main():
 ###Added code here for display:
                 if time.time() < screenTime:            #if the screen has been on for less than screenSecs update the display
                                 nextUpdate = str(int(round(updateTime - time.time())))
+                                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                                draw.text((x, top),"Gravity:" str(tiltSG),  font=font, fill=255)
+                                draw.text((x, top+12),"Temp:" str(tempf),  font=font, fill=255)
+                                draw.text((x, top+24),(datetime.datetime.now().strftime('%H:%M:%S')),  font=font, fill=255)
+                                disp.image(image)
+                                disp.display()
 
-                                #lcd.clear()
-                                #lcd.message("G:")
-                                #lcd.message(str(tiltSG))
-                                #lcd.message(" ")
-                                #lcd.message("T:")
-                                #lcd.message(str(tempf))
-                                #lcd.message("\n")
-                                #lcd.message(datetime.datetime.now().strftime('%H:%M:%S'))
-                                #stop
-                                #lcd.clear()
-                                #lcd.message(str(tiltSG))
-                                #lcd.message("\n")
-                                #lcd.message(str(tempf))
 
 
                 else:                                                   #otherwise blank the display
-                                #lcd.clear()
-                                #screen.fill((0,0,0))
-                                #pygame.display.flip()
-
+                                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                                disp.image(image)
+                                disp.display()
+                                
                         if time.time() > updateTime: #if we've reached the update time then do a POST to the google sheet and reset the updateTime
                                 #Tilt_Data
                                 #Change this to the address of your google sheet script
@@ -176,17 +200,13 @@ def main():
                                 print r.text
                                 updateTime = updateTime + updateSecs
                                 nextUpdate = str(int(round(updateTime - time.time())))
-                                lcd.clear()
-                                lcd.message("G: ")
-                                lcd.message(str(tiltSG))
-                                lcd.message(" ")
-                                lcd.message("T: ")
-                                lcd.message(str(tempf))
-                                lcd.message("\n")
-                                lcd.message(datetime.datetime.now().strftime('%H:%M:%S'))
-                                #lcd.message(" s:")
-                                #lcd.message(nextUpdate)
-                                #lcd.clear
+                                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                                draw.text((x, top),"Gravity:" str(tiltSG),  font=font, fill=255)
+                                draw.text((x, top+12),"Temp:" str(tempf),  font=font, fill=255)
+                                draw.text((x, top+24),(datetime.datetime.now().strftime('%H:%M:%S')),  font=font, fill=255)
+                                disp.image(image)
+                                disp.display()
+
 
 if __name__ == "__main__": #dont run this as a module
         main()
