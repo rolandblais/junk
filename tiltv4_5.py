@@ -142,8 +142,8 @@ def main():
                         if time.time() > updateTime: #if we've reached the update time then do a POST to the google sheet and reset the updateTime
                                 #Tilt_Data
                                 #Change this to the address of your google sheet script
-                                r = requests.post('https://script.google.com/macros/s/AKfycbx_6Q_63GFgzrKUsrQSinpfQWDW7RJZuMMFNWrR1XdIlb-oCoU/exec', data)
-                                #https://script.google.com/macros/s/AKfycbx_6Q_63GFgzrKUsrQSinpfQWDW7RJZuMMFNWrR1XdIlb-oCoU/exec
+                                r = requests.post('https://published_link', data)
+                                print r.text
 
                                 print r.text
                                 print tiltSG
@@ -151,22 +151,20 @@ def main():
 
                                 #Brewometer Cloud Data
                                 #Change this to the address of your google sheet script
-                                r = requests.post('https://script.google.com/macros/s/AKfycby4CTRc7j2zmnl9zzd6FuFNV0VfCsT9-DkJmlwZ1uJg7PWW-z8/exec', data)
-                                #https://script.google.com/macros/s/AKfycby4CTRc7j2zmnl9zzd6FuFNV0VfCsT9-DkJmlwZ1uJg7PWW-z8/exec
+                                r = requests.post('https://published_link', data)
                                 print r.text
 
 
                                 #Fermenator Cloud v3
                                 #Change this to the address of your google sheet script
-                                r = requests.post('https://script.google.com/macros/s/AKfycbxqflsg9YHb8UruGF7s3Qb7tOW6ypyl3KFiDuPlDQZfyoIKnNM/exec', data)
-                                #https://script.google.com/macros/s/AKfycbxqflsg9YHb8UruGF7s3Qb7tOW6ypyl3KFiDuPlDQZfyoIKnNM/exec
+                                r = requests.post('https://published_link', data)
                                 print r.text
 
                                 #brewstat.us
                                 #Change this to the address of your google sheet script
-                                r = requests.post('https://www.brewstat.us/tilt/vw8maenmpK/log', data)
-                                #https://www.brewstat.us/tilt/vw8maenmpK/log#Change this to the address of your google sheet script
+                                r = requests.post('https://published_link', data)
                                 print r.text
+                                
                                 updateTime = updateTime + updateSecs
                                 nextUpdate = str(int(round(updateTime - time.time())))
                                 lcd.clear()
